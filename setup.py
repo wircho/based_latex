@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="based_latex",
-    version="0.0.3",
+    version="0.0.4",
     author="Adolfo Rodriguez",
     author_email="adolfo@interoper.io",
     description="Generates properly baselined images and HTML code from LaTeX formulas.",
@@ -20,6 +20,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
+        'numpy',
         'Pillow'
     ]
 )
