@@ -38,22 +38,9 @@ The wrapping `<span>` element has this css class.
 ### `include_static_style = True`
 The generated HTML code can usually be embedded without any extra work. However, you may wish to factor out some of the style to avoid repeated CSS code. In that case you may set `include_static_style = False` and add this CSS code to your page's header:
 ```css
-span.latex { /* replace latex by the value of class_name */
-  position:relative;
-  display:inline-block;
-  vertical-align:0;
-}
-
-span.latex > img { /* replace latex by the value of class_name */
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:200%;
-  margin:0;
-  padding:0;
-  border-style:none;
-  border:0;
+img.latex { /* replace latex by the value of class_name */
+  object-fit:cover;
+  object-position:0 0;
 }
 ```
 
