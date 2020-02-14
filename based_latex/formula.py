@@ -157,11 +157,10 @@ class Formula:
 		pixel_bottom_delta = pixel_height_max - self.pixel_height_bottom
 		pixel_top_delta = pixel_height_max - self.pixel_height_top
 		self.image.crop((0, -pixel_top_delta, self.image.size[0], 2 * pixel_height_max)).save(path)
-		em_height = self.to_em(pixel_height_max)
-		em_bottom_delta = self.to_em(pixel_bottom_delta)
+		em_top_delta = self.to_em(pixel_top_delta)
 		class_property = '' if class_name is None else ' class="' + class_name + '"'
-		static_style = 'object-fit:cover;object-position:0 0;' if include_static_style else ''
-		return f'<img{class_property} style="width:{round(self.em_width, 4)}em;height:{round(em_height, 4)}em;vertical-align:{round(-self.em_height_bottom, 4)}em;{static_style}" src="',\
+		static_style = 'object-fit:cover;' if include_static_style else ''
+		return f'<img{class_property} style="width:{round(self.em_width, 4)}em;height:{round(self.em_height, 4)}em;vertical-align:{round(-self.em_height_bottom, 4)}em;object-position:0 {round(-em_top_delta, 4)}em;{static_style}" src="',\
            '">'
 
 def save_latex_image(expression, path, density = 512, factor = 1, class_name = "latex", include_static_style = True, process_timeout = 2):
