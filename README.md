@@ -36,13 +36,7 @@ HTML code is normally generated to match the element's font, multiplied by `fact
 The wrapping `<span>` element has this css class.
 
 ### `include_static_style = True`
-The generated HTML code can usually be embedded without any extra work. However, you may wish to factor out some of the style to avoid repeated CSS code. In that case you may set `include_static_style = False` and add this CSS code to your page's header:
-```css
-img.latex { /* replace latex by the value of class_name */
-  object-fit:cover;
-  object-position:0 0;
-}
-```
+(Documentation coming soon)
 
 ### `process_timeout = 2`
 This is the timeout of the `pdflatex` and `convert` (from ImageMagick) commands. After this timeout, the function will raise an exception if, for example, your formula happens to have a syntax error.
