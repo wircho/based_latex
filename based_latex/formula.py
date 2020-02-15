@@ -163,9 +163,9 @@ class Formula:
 		em_bottom_delta = self.to_em(pixel_bottom_delta)
 		self.image.crop((-pixel_width_delta, -pixel_top_delta, self.pixel_width + pixel_width_delta, self.pixel_height + pixel_bottom_delta)).save(path)
 		class_property = '' if class_name is None else ' class="' + class_name + '"'
-		static_style = ['position:relative;display:inline-block;pointer-events:none;', 'position:absolute;left:0;top:0;width:100%;height:200%;']
+		static_style = ['position:relative;display:inline-block;pointer-events:none;height:0;', 'position:absolute;']
 		static_style = [(style if include_static_style else '') for style in static_style]
-		return f'<span{class_property} style="{static_style[0]}width:{em_height_max}em;height:{em_height_max}em;margin:{-em_top_delta}em {-em_width_delta}em {-em_bottom_delta}em {-em_width_delta}em;"><img style="{static_style[1]}" src="',\
+		return f'<span{class_property} style="{static_style[0]}width:{self.em_width}em;"><img style="{static_style[1]}left:{-em_width_delta}em;top:{-em_height_max}em;width:{em_height_max}em;height:{2*em_height_max}em" src="',\
 		       '"></span>'
 
 def save_latex_image(expression, path, density = 512, factor = 1, class_name = "latex", include_static_style = True, process_timeout = 2):
