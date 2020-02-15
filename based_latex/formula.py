@@ -162,7 +162,7 @@ class Formula:
 		class_property = '' if class_name is None else ' class="' + class_name + '"'
 		static_style = ['position:relative;display:inline-block;', 'position:absolute;']
 		static_style = [(style if include_static_style else '') for style in static_style]
-		return f'<span style="{static_style[0]}width:{self.em_width}em;height:{em_height_max}em"><img style="{static_style[1]}left:0;top:0;width:{self.em_width}em;height:200%" src="',\
+		return f'<span style="{static_style[0]}width:{em_height_max}em;height:{em_height_max}em"><img style="{static_style[1]}left:0;top:0;width:{em_height_max}em;height:200%" src="',\
 		       '"></span>'
 
 def save_latex_image(expression, path, density = 512, factor = 1, class_name = "latex", include_static_style = True, process_timeout = 2):
