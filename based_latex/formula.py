@@ -165,8 +165,8 @@ class Formula:
 		}
 
 def save_latex_image(expression, path, density = 512, process_timeout = 2):
-	formula = Formula(expression, density = density, factor = factor, process_timeout = process_timeout)
-	result = formula.save_symmetric_image(path, class_name = class_name, include_static_style = include_static_style)
+	formula = Formula(expression, density = density, process_timeout = process_timeout)
+	result = formula.save_symmetric_image(path)
 	shutil.rmtree(formula.folder)
 	return result
 
