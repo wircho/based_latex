@@ -158,6 +158,7 @@ class Formula:
 		pixel_top_delta = pixel_height_max - self.pixel_height_top
 		self.image.crop((0, -pixel_top_delta, self.pixel_width, self.pixel_height + pixel_bottom_delta)).save(path)
 		return {
+			"density": self.density,
 			"width": self.pixel_width,
 			"half_height": pixel_height_max,
 			"top_delta": pixel_top_delta,
