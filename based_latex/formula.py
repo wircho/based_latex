@@ -152,23 +152,19 @@ class Formula:
 		       '"/></span>'
 
 	# Preferred method. Export image with equal upper and lower heights.
-	def save_symmetric_image(self, path, class_name = "latex", include_static_style = True):
+	def save_symmetric_image(self, path):
 		pixel_height_max = max(self.pixel_height_bottom, self.pixel_height_top, self.pixel_width)
 		pixel_bottom_delta = pixel_height_max - self.pixel_height_bottom
 		pixel_top_delta = pixel_height_max - self.pixel_height_top
-		pixel_width_delta = (pixel_height_max - self.pixel_width) / 2
-		em_height_max = self.to_em(pixel_height_max)
-		em_width_delta = self.to_em(pixel_width_delta)
-		em_top_delta = self.to_em(pixel_top_delta)
-		em_bottom_delta = self.to_em(pixel_bottom_delta)
-		self.image.crop((-pixel_width_delta, -pixel_top_delta, self.pixel_width + pixel_width_delta, self.pixel_height + pixel_bottom_delta)).save(path)
-		class_property = '' if class_name is None else ' class="' + class_name + '"'
-		static_style = ['position:relative;display:inline-block;pointer-events:none;height:0;', 'position:absolute;']
-		static_style = [(style if include_static_style else '') for style in static_style]
-		return f'<span{class_property} style="{static_style[0]}width:{self.pixel_width}px;"><img style="{static_style[1]}left:{-pixel_width_delta}px;top:{-pixel_height_max}px;width:{pixel_height_max}px;height:{2*pixel_height_max}px" src="',\
-		       '"></span>'
+		self.image.crop((0, -pixel_top_delta, self.pixel_width, self.pixel_height + pixel_bottom_delta)).save(path)
+		return {
+			"width": self.pixel_width,
+			"half_height": pixel_height_max,
+			"top_delta": pixel_top_delta,
+			"bottom_delta": pixel_bottom_delta
+		}
 
-def save_latex_image(expression, path, density = 512, factor = 1, class_name = "latex", include_static_style = True, process_timeout = 2):
+def save_latex_image(expression, path, density = 512, process_timeout = 2):
 	formula = Formula(expression, density = density, factor = factor, process_timeout = process_timeout)
 	result = formula.save_symmetric_image(path, class_name = class_name, include_static_style = include_static_style)
 	shutil.rmtree(formula.folder)
