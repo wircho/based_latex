@@ -153,15 +153,17 @@ class Formula:
 
 	# Preferred method. Export image with equal upper and lower heights.
 	def save_symmetric_image(self, path, class_name = "latex", include_static_style = True):
-		pixel_height_max = max(self.pixel_height_bottom, self.pixel_height_top)
+		pixel_height_max = max(self.pixel_height_bottom, self.pixel_height_top, self.pixel_width)
 		pixel_bottom_delta = pixel_height_max - self.pixel_height_bottom
 		pixel_top_delta = pixel_height_max - self.pixel_height_top
-		self.image.crop((0, -pixel_top_delta, self.image.size[0], 2 * pixel_height_max)).save(path)
-		em_top_delta = self.to_em(pixel_top_delta)
+		pixel_width_delta = (pixel_height_max - self.pixel_width) / 2
+		em_height_max = self.to_em(pixel_height_max)
+		self.image.crop((-pixel_width_delta, -pixel_top_delta, pixel_height_max, 2 * pixel_height_max)).save(path)
 		class_property = '' if class_name is None else ' class="' + class_name + '"'
-		static_style = 'object-fit:cover;' if include_static_style else ''
-		return f'<img{class_property} style="width:{round(self.em_width, 4)}em;height:{round(self.em_height, 4)}em;vertical-align:{round(-self.em_height_bottom, 4)}em;object-position:0 {round(-em_top_delta, 4)}em;{static_style}" src="',\
-           '">'
+		static_style = ['position:relative;display:inline-block;', 'position:absolute;']
+		static_style = [(style if include_static_style else '') for style in static_style]
+		return f'<span style="{static_style[0]}width:{self.em_width}em;height:{em_height_max}em"><img style="{static_style[1]}left:0;top:0;width:{self.em_width}em;height:200%" src="',\
+		       '"></span>'
 
 def save_latex_image(expression, path, density = 512, factor = 1, class_name = "latex", include_static_style = True, process_timeout = 2):
 	formula = Formula(expression, density = density, factor = factor, process_timeout = process_timeout)
