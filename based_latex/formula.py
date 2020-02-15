@@ -158,7 +158,7 @@ class Formula:
 		pixel_top_delta = pixel_height_max - self.pixel_height_top
 		pixel_width_delta = (pixel_height_max - self.pixel_width) / 2
 		em_height_max = self.to_em(pixel_height_max)
-		self.image.crop((-pixel_width_delta, -pixel_top_delta, pixel_height_max, 2 * pixel_height_max)).save(path)
+		self.image.crop((-pixel_width_delta, -pixel_top_delta, self.pixel_width + pixel_width_delta, self.pixel_height + pixel_bottom_delta)).save(path)
 		class_property = '' if class_name is None else ' class="' + class_name + '"'
 		static_style = ['position:relative;display:inline-block;', 'position:absolute;']
 		static_style = [(style if include_static_style else '') for style in static_style]

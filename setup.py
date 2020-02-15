@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="based_latex",
-    version="0.0.9",
+    version="0.0.10",
     author="Adolfo Rodriguez",
     author_email="adolfo@interoper.io",
     description="Generates properly baselined images and HTML code from LaTeX formulas.",
