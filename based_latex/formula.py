@@ -153,7 +153,7 @@ class Formula:
 
 	# Preferred method. Export image with equal upper and lower heights.
 	def save_symmetric_image(self, path):
-		pixel_height_max = max(self.pixel_height_bottom, self.pixel_height_top, self.pixel_width)
+		pixel_height_max = max(self.pixel_height_bottom, self.pixel_height_top)
 		pixel_bottom_delta = pixel_height_max - self.pixel_height_bottom
 		pixel_top_delta = pixel_height_max - self.pixel_height_top
 		self.image.crop((0, -pixel_top_delta, self.pixel_width, self.pixel_height + pixel_bottom_delta)).save(path)
