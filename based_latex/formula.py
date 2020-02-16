@@ -90,12 +90,14 @@ class Formula:
 	def __init__(self, expression, density = 512, factor = 1, process_timeout = 2):
 		expression = expression.strip("$")
 		folder = tempfile.mkdtemp()
-		paths = dict((ext, os.path.join(folder, "formula." + ext)) for ext in ["tex", "pdf", "png", "json"])
+		paths = dict((ext, os.path.join(folder, "formula." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
 		with open(paths["tex"], "w") as tex_file: tex_file.write(formula_tex)
 		# subprocess.run(["pdflatex", "-output-directory", folder, "\\def\\formula{" + expression + "}\\input{" + paths["tex"] + "}"])
 		subprocess.check_output(["pdflatex", "-output-directory", folder, "\\def\\formula{" + expression + "}\\input{" + paths["tex"] + "}"], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["convert", "-density", str(density), paths["pdf"], "-quality", "100", paths["png"]], stderr = subprocess.STDOUT, timeout = process_timeout)
+		subprocess.check_output(["inkscape", "-l", paths["svg"], paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		img = Image.open(paths["png"])
+		with open(paths["svg"]) as svgfile: svg = svgfile.read()
 		array = np.array(img)[:,:,1]
 		row = array.sum(axis=0)
 		col = array.sum(axis=1)
@@ -116,6 +118,8 @@ class Formula:
 		self.factor = factor
 		self.density = density
 		self.image = img
+		self.dimensions = dims
+		self.svg = svg
 		self.baseline_perc = baseline_perc
 		pixel_width = img.size[0]
 		pixel_height = img.size[1]
@@ -162,7 +166,9 @@ class Formula:
 			"width": self.pixel_width,
 			"half_height": pixel_height_max,
 			"top_delta": pixel_top_delta,
-			"bottom_delta": pixel_bottom_delta
+			"bottom_delta": pixel_bottom_delta,
+			"dimensions": self.dimensions,
+			"svg": self.svg
 		}
 
 def save_latex_image(expression, path, density = 512, process_timeout = 2):

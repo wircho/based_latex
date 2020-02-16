@@ -10,7 +10,7 @@ pip install based_latex
 
 ## Requirements
 
-This package requires a [LaTeX distribution](https://www.latex-project.org/), as well as the [ImageMagick package](https://imagemagick.org/).
+This package requires a [LaTeX distribution](https://www.latex-project.org/), as well as [Inkscape](https://inkscape.org/) and the [ImageMagick package](https://imagemagick.org/) (this last requirement may be soon removed).
 
 ## Usage
 
