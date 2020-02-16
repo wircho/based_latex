@@ -96,7 +96,7 @@ class Formula:
 		# subprocess.check_output(["convert", "-density", str(density), paths["pdf"], "-quality", "100", paths["png"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["inkscape", "-l", paths["svg"], paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		# img = Image.open(paths["png"])
-		with open(paths["svg"]) as svgfile: svg = svgfile.read()
+		with open(paths["svg"]) as svgfile: svg = "\n".join(svgfile.readlines()[1:])
 		# array = np.array(img)[:,:,1]
 		# row = array.sum(axis=0)
 		# col = array.sum(axis=1)
