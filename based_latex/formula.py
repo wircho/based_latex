@@ -96,8 +96,9 @@ class Formula:
 		with open(paths["tex"], "w") as tex_file: tex_file.write(formula_tex)
 		subprocess.check_output(["pdflatex", "-output-directory", folder, "\\def\\formula{" + expression + "}\\input{" + paths["tex"] + "}"], stderr = subprocess.STDOUT, timeout = process_timeout)
 		# subprocess.check_output(["convert", "-density", str(density), paths["pdf"], "-quality", "100", paths["png"]], stderr = subprocess.STDOUT, timeout = process_timeout)
-		# subprocess.check_output(["inkscape", "-l", paths["svg"], paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
-		subprocess.check_output(["pdf2svg", paths["pdf"], paths["svg"]], stderr = subprocess.STDOUT, timeout = process_timeout)
+		subprocess.check_output(["gs", "-o", paths["pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
+		subprocess.check_output(["inkscape", "-l", paths["svg"], paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
+		# subprocess.check_output(["pdf2svg", paths["pdf"], paths["svg"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		# img = Image.open(paths["png"])
 		with open(paths["svg"]) as svgfile: svg = "\n".join(svgfile.readlines()[1:])
 		# array = np.array(img)[:,:,1]
