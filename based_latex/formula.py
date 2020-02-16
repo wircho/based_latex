@@ -92,46 +92,45 @@ class Formula:
 		folder = tempfile.mkdtemp()
 		paths = dict((ext, os.path.join(folder, "formula." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
 		with open(paths["tex"], "w") as tex_file: tex_file.write(formula_tex)
-		# subprocess.run(["pdflatex", "-output-directory", folder, "\\def\\formula{" + expression + "}\\input{" + paths["tex"] + "}"])
 		subprocess.check_output(["pdflatex", "-output-directory", folder, "\\def\\formula{" + expression + "}\\input{" + paths["tex"] + "}"], stderr = subprocess.STDOUT, timeout = process_timeout)
-		subprocess.check_output(["convert", "-density", str(density), paths["pdf"], "-quality", "100", paths["png"]], stderr = subprocess.STDOUT, timeout = process_timeout)
+		# subprocess.check_output(["convert", "-density", str(density), paths["pdf"], "-quality", "100", paths["png"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["inkscape", "-l", paths["svg"], paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
-		img = Image.open(paths["png"])
+		# img = Image.open(paths["png"])
 		with open(paths["svg"]) as svgfile: svg = svgfile.read()
-		array = np.array(img)[:,:,1]
-		row = array.sum(axis=0)
-		col = array.sum(axis=1)
-		left = find_first_nonzero(row)
-		top = find_first_nonzero(col)
-		right = find_first_nonzero(row, start = -1, step = -1)
-		bottom = find_first_nonzero(col, start = -1, step = -1)
+		# array = np.array(img)[:,:,1]
+		# row = array.sum(axis=0)
+		# col = array.sum(axis=1)
+		# left = find_first_nonzero(row)
+		# top = find_first_nonzero(col)
+		# right = find_first_nonzero(row, start = -1, step = -1)
+		# bottom = find_first_nonzero(col, start = -1, step = -1)
 		with open(paths["json"], "r") as file: str_dims = json.load(file)
 		dims = {}
 		for key, value in str_dims.items(): dims[key] = float(value.replace("pt", ""))
-		baseline_perc = (dims["pagemargin"] + dims["snippetdepth"]) / dims["pageheight"]
-		top_perc = top / img.size[1]
-		bottom_perc = bottom / img.size[1]
-		baseline_perc = (baseline_perc - bottom_perc) / (1 - top_perc - bottom_perc)
-		img = img.crop((left, top, img.size[0] - right, img.size[1] - bottom))
+		# baseline_perc = (dims["pagemargin"] + dims["snippetdepth"]) / dims["pageheight"]
+		# top_perc = top / img.size[1]
+		# bottom_perc = bottom / img.size[1]
+		# baseline_perc = (baseline_perc - bottom_perc) / (1 - top_perc - bottom_perc)
+		# img = img.crop((left, top, img.size[0] - right, img.size[1] - bottom))
 		self.folder = folder
 		self.expression = expression
-		self.factor = factor
-		self.density = density
-		self.image = img
+		# self.factor = factor
+		# self.density = density
+		# self.image = img
 		self.dimensions = dims
 		self.svg = svg
-		self.baseline_perc = baseline_perc
-		pixel_width = img.size[0]
-		pixel_height = img.size[1]
-		self.pixel_width = pixel_width
-		self.pixel_height = pixel_height
-		self.pixel_height_bottom = int(self.pixel_height * baseline_perc + 0.5)
-		self.pixel_height_top = self.pixel_height - self.pixel_height_bottom
-		self.em_width = self.to_em(self.pixel_width)
-		self.em_height = self.to_em(self.pixel_height)
-		self.em_height_bottom = self.to_em(self.pixel_height_bottom)
-		self.em_height_top = self.to_em(self.pixel_height_top)
-		self.em_vertical_align = -baseline_perc * self.em_height
+		# self.baseline_perc = baseline_perc
+		# pixel_width = img.size[0]
+		# pixel_height = img.size[1]
+		# self.pixel_width = pixel_width
+		# self.pixel_height = pixel_height
+		# self.pixel_height_bottom = int(self.pixel_height * baseline_perc + 0.5)
+		# self.pixel_height_top = self.pixel_height - self.pixel_height_bottom
+		# self.em_width = self.to_em(self.pixel_width)
+		# self.em_height = self.to_em(self.pixel_height)
+		# self.em_height_bottom = self.to_em(self.pixel_height_bottom)
+		# self.em_height_top = self.to_em(self.pixel_height_top)
+		# self.em_vertical_align = -baseline_perc * self.em_height
 
 	def to_em(self, pixels):
 		return pixels * 8 * self.factor / self.density
@@ -157,16 +156,16 @@ class Formula:
 
 	# Preferred method. Export image with equal upper and lower heights.
 	def save_symmetric_image(self, path):
-		pixel_height_max = max(self.pixel_height_bottom, self.pixel_height_top)
-		pixel_bottom_delta = pixel_height_max - self.pixel_height_bottom
-		pixel_top_delta = pixel_height_max - self.pixel_height_top
-		self.image.crop((0, -pixel_top_delta, self.pixel_width, self.pixel_height + pixel_bottom_delta)).save(path)
+		# pixel_height_max = max(self.pixel_height_bottom, self.pixel_height_top)
+		# pixel_bottom_delta = pixel_height_max - self.pixel_height_bottom
+		# pixel_top_delta = pixel_height_max - self.pixel_height_top
+		# self.image.crop((0, -pixel_top_delta, self.pixel_width, self.pixel_height + pixel_bottom_delta)).save(path)
 		return {
-			"density": self.density,
-			"width": self.pixel_width,
-			"half_height": pixel_height_max,
-			"top_delta": pixel_top_delta,
-			"bottom_delta": pixel_bottom_delta,
+			# "density": self.density,
+			# "width": self.pixel_width,
+			# "half_height": pixel_height_max,
+			# "top_delta": pixel_top_delta,
+			# "bottom_delta": pixel_bottom_delta,
 			"dimensions": self.dimensions,
 			"svg": self.svg
 		}
