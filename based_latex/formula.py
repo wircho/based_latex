@@ -155,7 +155,7 @@ class Formula:
 		       '"/></span>'
 
 	# Preferred method. Export image with equal upper and lower heights.
-	def save_symmetric_image(self, path):
+	def save_symmetric_image(self): #, path):
 		# pixel_height_max = max(self.pixel_height_bottom, self.pixel_height_top)
 		# pixel_bottom_delta = pixel_height_max - self.pixel_height_bottom
 		# pixel_top_delta = pixel_height_max - self.pixel_height_top
@@ -170,9 +170,9 @@ class Formula:
 			"svg": self.svg
 		}
 
-def save_latex_image(expression, path, density = 512, process_timeout = 2):
-	formula = Formula(expression, density = density, process_timeout = process_timeout)
-	result = formula.save_symmetric_image(path)
+def save_latex_image(expression, process_timeout = 2): #, path, density = 512, process_timeout = 2):
+	formula = Formula(expression, process_timeout = process_timeout) #, density = density, process_timeout = process_timeout)
+	result = formula.save_symmetric_image() #path)
 	shutil.rmtree(formula.folder)
 	return result
 
