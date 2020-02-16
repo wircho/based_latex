@@ -18,6 +18,8 @@ formula_tex = """
 \\setlength{\\abovedisplayskip}{0pt}
 \\setlength{\\belowdisplayskip}{0pt}
 
+\\usepackage[T1]{fontenc}
+
 \\usepackage{geometry}
 \\usepackage{xstring}
 
