@@ -113,9 +113,9 @@ class Formula:
 		top = self.dimensions["pagetmargin"] + self.dimensions["snippetheight"]
 		bottom = self.dimensions["pagebmargin"] + self.dimensions["snippetdepth"]
 		lmargin = margin
-		tmargin = margin + 75.2804176738 - top
+		tmargin = margin + 37.6402088369 - top
 		rmargin = margin
-		bmargin = margin + 75.2804176738 - bottom
+		bmargin = margin + 37.6402088369 - bottom
 		self.clear()
 		self.populate(lmargin, tmargin, rmargin, bmargin, process_timeout = process_timeout)
 		
