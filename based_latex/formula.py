@@ -96,7 +96,7 @@ class Formula:
 		paths1 = dict((ext, os.path.join(folder, "formula1." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
 		with open(paths["tex"], "w") as tex_file: tex_file.write(formula_tex)
 		subprocess.check_output(["pdflatex", "-output-directory", folder, "\\def\\formula{" + expression + "}\\input{" + paths["tex"] + "}"], stderr = subprocess.STDOUT, timeout = process_timeout)
-		# subprocess.check_output(["convert", "-density", str(density), paths["pdf"], "-quality", "100", paths["png"]], stderr = subprocess.STDOUT, timeout = process_timeout)
+		subprocess.check_output(["convert", "-density", str(density), paths["pdf"], "-quality", "100", paths["png"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["gs", "-o", paths1["pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["inkscape", "-l", paths["svg"], paths1["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		# subprocess.check_output(["pdf2svg", paths["pdf"], paths["svg"]], stderr = subprocess.STDOUT, timeout = process_timeout)
