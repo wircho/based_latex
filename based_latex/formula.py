@@ -110,8 +110,8 @@ class Formula:
 		# print("Got height: " + str(svg_height))
 		# new_pageheight = self.dimensions["pageheight"] * math.ceil(svg_height) / svg_height
 		# new_margin = margin + (new_pageheight - self.dimensions["pageheight"]) / 2
-		top = page.dimensions["pagetmargin"] + page.dimensions["snippetheight"]
-		bottom = page.dimensions["pagebmargin"] + page.dimensions["snippetdepth"]
+		top = self.dimensions["pagetmargin"] + self.dimensions["snippetheight"]
+		bottom = self.dimensions["pagebmargin"] + self.dimensions["snippetdepth"]
 		lmargin = margin
 		tmargin = margin + 200 - top
 		rmargin = margin
