@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 import xml.etree.ElementTree as ET
 
-def get_formula_tex(margin):
+def get_formula_tex(lmargin, tmargin, rmargin, bmargin):
 	return """
 	% https://tex.stackexchange.com/questions/44486/pixel-perfect-vertical-alignment-of-image-rendered-tex-snippets
 	\\documentclass[10pt]{article}
@@ -33,7 +33,10 @@ def get_formula_tex(margin):
 	\\newlength{\\snippetdepth}
 	\\newlength{\\pagewidth}
 	\\newlength{\\pageheight}
-	\\newlength{\\pagemargin}
+	\\newlength{\\pagelmargin}
+	\\newlength{\\pagetmargin}
+	\\newlength{\\pagermargin}
+	\\newlength{\\pagebmargin}
 
 	\\begin{lrbox}{\\snippetbox}
 	$ {\\formula} $
@@ -43,16 +46,19 @@ def get_formula_tex(margin):
 	\\settoheight{\\snippetheight}{\\usebox{\\snippetbox}}
 	\\settodepth{\\snippetdepth}{\\usebox{\\snippetbox}}
 
-	\\setlength\\pagemargin{""" + str(margin) + """pt}
+	\\setlength\\pagelmargin{""" + str(lmargin) + """pt}
+	\\setlength\\pagetmargin{""" + str(tmargin) + """pt}
+	\\setlength\\pagermargin{""" + str(rmargin) + """pt}
+	\\setlength\\pagebmargin{""" + str(bmargin) + """pt}
 
 	\\setlength\\pagewidth\\snippetwidth
-	\\addtolength\\pagewidth\\pagemargin
-	\\addtolength\\pagewidth\\pagemargin
+	\\addtolength\\pagewidth\\pagelmargin
+	\\addtolength\\pagewidth\\pagermargin
 
 	\\setlength\\pageheight\\snippetheight
 	\\addtolength{\\pageheight}{\\snippetdepth}
-	\\addtolength\\pageheight\\pagemargin
-	\\addtolength\\pageheight\\pagemargin
+	\\addtolength\\pageheight\\pagetmargin
+	\\addtolength\\pageheight\\pagebmargin
 
 	\\newwrite\\foo
 	\\immediate\\openout\\foo=\\jobname.json
@@ -71,11 +77,14 @@ def get_formula_tex(margin):
 	  \\immediate\\write\\foo{  "snippetwidth": "\\the\\snippetwidth",}
 	  \\immediate\\write\\foo{  "pagewidth": "\\the\\pagewidth",}
 	  \\immediate\\write\\foo{  "pageheight": "\\the\\pageheight",}
-	  \\immediate\\write\\foo{  "pagemargin": "\\the\\pagemargin"}
+	  \\immediate\\write\\foo{  "pagelmargin": "\\the\\pagelmargin"}
+	  \\immediate\\write\\foo{  "pagermargin": "\\the\\pagermargin"}
+	  \\immediate\\write\\foo{  "pagetmargin": "\\the\\pagetmargin"}
+	  \\immediate\\write\\foo{  "pagebmargin": "\\the\\pagebmargin"}
 	  \\immediate\\write\\foo{\\CloseBrace}
 	\\closeout\\foo
 
-	\\geometry{paperwidth=\\pagewidth,paperheight=\\pageheight,margin=\\pagemargin}
+	\\geometry{paperwidth=\\pagewidth,paperheight=\\pageheight,lmargin=\\pagelmargin,tmargin=\\pagetmargin,rmargin=\\pagermargin,bmargin=\\pagebmargin}
 
 	\\begin{document}
 	\\usebox{\\snippetbox}
@@ -94,22 +103,28 @@ class Formula:
 	def __init__(self, expression, process_timeout = 3):
 		self.expression = expression.strip("$")
 		margin = 4
-		self.populate(margin, process_timeout = process_timeout)
-		tree = ET.parse(self.paths["svg"])
-		svg = tree.getroot()
-		svg_height = float(svg.get("height"))
-		print("Got height: " + str(svg_height))
-		new_pageheight = self.dimensions["pageheight"] * math.ceil(svg_height) / svg_height
-		new_margin = margin + (new_pageheight - self.dimensions["pageheight"]) / 2
+		self.populate(margin, margin, margin, margin, process_timeout = process_timeout)
+		# tree = ET.parse(self.paths["svg"])
+		# svg = tree.getroot()
+		# svg_height = float(svg.get("height"))
+		# print("Got height: " + str(svg_height))
+		# new_pageheight = self.dimensions["pageheight"] * math.ceil(svg_height) / svg_height
+		# new_margin = margin + (new_pageheight - self.dimensions["pageheight"]) / 2
+		top = page.dimensions["pagetmargin"] + page.dimensions["snippetheight"]
+		bottom = page.dimensions["pagebmargin"] + page.dimensions["snippetdepth"]
+		lmargin = margin
+		tmargin = margin + 200 - top
+		rmargin = margin
+		bmargin = margin + 200 - bottom
 		self.clear()
-		self.populate(new_margin, process_timeout = process_timeout)
+		self.populate(lmargin, tmargin, rmargin, bmargin, process_timeout = process_timeout)
 		
 
-	def populate(self, margin, process_timeout = 3):
+	def populate(self, lmargin, tmargin, rmargin, bmargin, process_timeout = 3):
 		folder = tempfile.mkdtemp()
 		paths = dict((ext, os.path.join(folder, "formula." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
 		paths1 = dict((ext, os.path.join(folder, "formula1." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
-		with open(paths["tex"], "w") as tex_file: tex_file.write(get_formula_tex(margin))
+		with open(paths["tex"], "w") as tex_file: tex_file.write(get_formula_tex(lmargin, tmargin, rmargin, bmargin))
 		subprocess.check_output(["pdflatex", "-output-directory", folder, "\\def\\formula{" + self.expression + "}\\input{" + paths["tex"] + "}"], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["gs", "-o", paths1["pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["inkscape", "-l", paths["svg"], paths1["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
