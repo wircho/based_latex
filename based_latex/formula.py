@@ -77,9 +77,9 @@ def get_formula_tex(lmargin, tmargin, rmargin, bmargin):
 	  \\immediate\\write\\foo{  "snippetwidth": "\\the\\snippetwidth",}
 	  \\immediate\\write\\foo{  "pagewidth": "\\the\\pagewidth",}
 	  \\immediate\\write\\foo{  "pageheight": "\\the\\pageheight",}
-	  \\immediate\\write\\foo{  "pagelmargin": "\\the\\pagelmargin"}
-	  \\immediate\\write\\foo{  "pagermargin": "\\the\\pagermargin"}
-	  \\immediate\\write\\foo{  "pagetmargin": "\\the\\pagetmargin"}
+	  \\immediate\\write\\foo{  "pagelmargin": "\\the\\pagelmargin",}
+	  \\immediate\\write\\foo{  "pagermargin": "\\the\\pagermargin",}
+	  \\immediate\\write\\foo{  "pagetmargin": "\\the\\pagetmargin",}
 	  \\immediate\\write\\foo{  "pagebmargin": "\\the\\pagebmargin"}
 	  \\immediate\\write\\foo{\\CloseBrace}
 	\\closeout\\foo
