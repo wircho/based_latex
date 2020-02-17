@@ -124,7 +124,7 @@ class Formula:
 	def save_svg(self, path):
 		shutil.copyfile(self.paths["svg"], path)
 		return {
-			"dimensions": self.dimensions
+			"dimensions": self.dimensions,
 			"svg": self.svg
 		}
 
