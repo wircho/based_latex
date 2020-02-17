@@ -119,11 +119,13 @@ class Formula:
 		self.folder = folder
 		self.paths = paths
 		self.dimensions = dims
+		with open(paths["svg"], "r") as file: self.svg = file.read()
 
 	def save_svg(self, path):
 		shutil.copyfile(self.paths["svg"], path)
 		return {
 			"dimensions": self.dimensions
+			"svg": self.svg
 		}
 
 	def clear(self):
