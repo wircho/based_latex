@@ -1,1 +1,1 @@
-from .formula import save_latex_image
+from .formula import get_latex_svg_data
