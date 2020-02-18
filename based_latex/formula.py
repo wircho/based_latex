@@ -100,25 +100,16 @@ def find_first_nonzero(l, start = 0, step = 1):
 	return j
 
 class Formula:
-	def __init__(self, expression, process_timeout = 3):
+	def __init__(self, expression, margin = 4, process_timeout = 2):
 		self.expression = expression.strip("$")
-		margin = 4
-		self.populate(margin, margin, margin, margin, process_timeout = process_timeout)
-		# top = self.dimensions["pagetmargin"] + self.dimensions["snippetheight"]
-		# bottom = self.dimensions["pagebmargin"] + self.dimensions["snippetdepth"]
-		# lmargin = margin
-		# tmargin = margin + 37.6402088369 - top
-		# rmargin = margin
-		# bmargin = margin + 37.6402088369 - bottom
-		# self.clear()
-		# self.populate(lmargin, tmargin, rmargin, bmargin, process_timeout = process_timeout)
+		self.populate(margin, process_timeout)
 		
 
-	def populate(self, lmargin, tmargin, rmargin, bmargin, process_timeout = 3):
+	def populate(self, margin, process_timeout):
 		folder = tempfile.mkdtemp()
 		paths = dict((ext, os.path.join(folder, "formula." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
 		paths1 = dict((ext, os.path.join(folder, "formula1." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
-		with open(paths["tex"], "w") as tex_file: tex_file.write(get_formula_tex(lmargin, tmargin, rmargin, bmargin))
+		with open(paths["tex"], "w") as tex_file: tex_file.write(get_formula_tex(margin, margin, margin, margin))
 		subprocess.check_output(["pdflatex", "-output-directory", folder, "\\def\\formula{" + self.expression + "}\\input{" + paths["tex"] + "}"], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["gs", "-o", paths1["pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
 		subprocess.check_output(["inkscape", "-l", paths["svg"], paths1["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
@@ -128,10 +119,9 @@ class Formula:
 		self.folder = folder
 		self.paths = paths
 		self.dimensions = dims
-		with open(paths["svg"], "r") as file: self.svg = file.read()
+		with open(paths["svg"], "r") as file: self.svg = "\n".join(file.readlines()[1:]) # Ignored first line's <!--<xml...>-->
 
-	def save_svg(self, path):
-		shutil.copyfile(self.paths["svg"], path)
+	def get_svg_data(self):
 		return {
 			"dimensions": self.dimensions,
 			"svg": self.svg
@@ -141,10 +131,11 @@ class Formula:
 		shutil.rmtree(self.folder)
 
 
-def save_latex_image(expression, path, process_timeout = 2):
-	formula = Formula(expression, process_timeout = process_timeout)
-	result = formula.save_svg(path)
+def get_latex_svg_data(expression, margin = 4, process_timeout = 2):
+	formula = Formula(expression, margin = margin, process_timeout = process_timeout)
+	result = formula.get_svg_data()
 	formula.clear()
+	del formula
 	return result
 
 
