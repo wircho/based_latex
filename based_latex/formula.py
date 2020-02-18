@@ -104,20 +104,14 @@ class Formula:
 		self.expression = expression.strip("$")
 		margin = 4
 		self.populate(margin, margin, margin, margin, process_timeout = process_timeout)
-		# tree = ET.parse(self.paths["svg"])
-		# svg = tree.getroot()
-		# svg_height = float(svg.get("height"))
-		# print("Got height: " + str(svg_height))
-		# new_pageheight = self.dimensions["pageheight"] * math.ceil(svg_height) / svg_height
-		# new_margin = margin + (new_pageheight - self.dimensions["pageheight"]) / 2
-		top = self.dimensions["pagetmargin"] + self.dimensions["snippetheight"]
-		bottom = self.dimensions["pagebmargin"] + self.dimensions["snippetdepth"]
-		lmargin = margin
-		tmargin = margin + 37.6402088369 - top
-		rmargin = margin
-		bmargin = margin + 37.6402088369 - bottom
-		self.clear()
-		self.populate(lmargin, tmargin, rmargin, bmargin, process_timeout = process_timeout)
+		# top = self.dimensions["pagetmargin"] + self.dimensions["snippetheight"]
+		# bottom = self.dimensions["pagebmargin"] + self.dimensions["snippetdepth"]
+		# lmargin = margin
+		# tmargin = margin + 37.6402088369 - top
+		# rmargin = margin
+		# bmargin = margin + 37.6402088369 - bottom
+		# self.clear()
+		# self.populate(lmargin, tmargin, rmargin, bmargin, process_timeout = process_timeout)
 		
 
 	def populate(self, lmargin, tmargin, rmargin, bmargin, process_timeout = 3):

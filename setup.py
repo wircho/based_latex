@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-version = "0.0.46"
+version = "0.0.47"
 
 if __name__ == "__main__":
     setuptools.setup(
