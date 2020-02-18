@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-version = "0.0.49"
+version = "0.0.50"
 
 if __name__ == "__main__":
     setuptools.setup(
@@ -22,8 +22,5 @@ if __name__ == "__main__":
             "Operating System :: OS Independent",
         ],
         python_requires='>=3.6',
-        install_requires=[
-            'numpy',
-            'Pillow'
-        ]
+        install_requires=[]
     )

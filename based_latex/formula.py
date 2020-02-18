@@ -6,8 +6,6 @@ import shutil
 import random
 import tempfile
 import subprocess
-import numpy as np
-from PIL import Image
 import xml.etree.ElementTree as ET
 
 def get_formula_tex(lmargin, tmargin, rmargin, bmargin):
