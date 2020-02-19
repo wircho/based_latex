@@ -89,57 +89,34 @@ def get_formula_tex(lmargin, tmargin, rmargin, bmargin):
 	\\end{document}
 	"""
 
-def find_first_nonzero(l, start = 0, step = 1):
-	i = start
-	j = 0
-	while l[i] == 0:
-		j += 1
-		i += step # Fails when out of bounds
-	return j
-
-class Formula:
-	def __init__(self, expression, margin = 4, process_timeout = 2):
-		self.expression = expression.strip("$")
-		self.populate(margin, process_timeout)
-		
-
-	def populate(self, margin, process_timeout):
-		folder = tempfile.mkdtemp()
-		paths = dict((ext, os.path.join(folder, "formula." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
-		paths1 = dict((ext, os.path.join(folder, "formula1." + ext)) for ext in ["tex", "pdf", "png", "json","svg"])
-		with open(paths["tex"], "w") as tex_file: tex_file.write(get_formula_tex(margin, margin, margin, margin))
-		subprocess.check_output(["pdflatex", "-output-directory", folder, "\\def\\formula{" + self.expression + "}\\input{" + paths["tex"] + "}"], stderr = subprocess.STDOUT, timeout = process_timeout)
-		subprocess.check_output(["gs", "-o", paths1["pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
-		subprocess.check_output(["inkscape", "-l", paths["svg"], paths1["pdf"]], stderr = subprocess.STDOUT, timeout = process_timeout)
-		with open(paths["json"], "r") as file: str_dims = json.load(file)
-		dims = {}
-		for key, value in str_dims.items(): dims[key] = float(value.replace("pt", ""))
-		self.folder = folder
-		self.paths = paths
-		self.dimensions = dims
-		with open(paths["svg"], "r") as file: self.svg = "\n".join(file.readlines()[1:]) # Ignored first line's <!--<xml...>-->
-
-	def get_svg_data(self):
-		return {
-			"dimensions": self.dimensions,
-			"svg": self.svg
-		}
-
-	def clear(self):
-		shutil.rmtree(self.folder)
-
-
-def get_latex_svg_data(expression, margin = 4, process_timeout = 2):
-	formula = Formula(expression, margin = margin, process_timeout = process_timeout)
-	result = formula.get_svg_data()
-	formula.clear()
-	del formula
-	return result
-
-
-
-
-
+def get_latex_svg_data(formula, margin = 4):
+	# Trims dollar signs from formula
+	formula = formula.strip("$")
+	# Created new temporary folder
+	folder = tempfile.mkdtemp()
+	# Defines all paths to be used
+	paths = dict((ext, os.path.join(folder, "formula." + ext)) for ext in [".tex", ".pdf", "_outlines.pdf", ".json",".svg"])
+	# Writes TEX file
+	with open(paths["tex"], "w") as tex_file: tex_file.write(get_formula_tex(margin, margin, margin, margin))
+	# Generates PDF from TEX file
+	subprocess.run(["pdflatex", "-output-directory", folder, "-halt-on-error", "\\def\\formula{" + formula + "}\\input{" + paths["tex"] + "}"])
+	# Converts fonts to outlines and generates new PDF file
+	subprocess.run(["gs", "-o", paths["_outlines.pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths["pdf"]])
+	# Generates SVG from PDF
+	subprocess.run(["inkscape", "-l", paths["svg"], paths["_outlines.pdf"]])
+	# Loads JSON file parameters generated during TEX compilation
+	with open(paths["json"], "r") as file: str_dimensions = json.load(file)
+	dimensions = {}
+	for key, value in str_dimensions.items(): dimensions[key] = float(value.replace("pt", ""))
+	# Reads SVG code (minus first line <!--<xml...>-->)
+	with open(paths["svg"], "r") as file: svg = "\n".join(file.readlines()[1:])
+	# Removes temporary folder
+	shutil.rmtree(folder)
+	# Returns dimensions dictionary and SVG code in a JSON dictionary
+	return {
+		"dimensions": dimensions,
+		"svg": svg
+	}
 
 
 
