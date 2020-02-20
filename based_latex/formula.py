@@ -24,6 +24,7 @@ def get_formula_tex(lmargin, tmargin, rmargin, bmargin):
 	\\usepackage{xstring}
 
 	\\usepackage{amsmath}
+	\\usepackage{amsfonts}
 
 	\\newsavebox{\\snippetbox}
 	\\newlength{\\snippetwidth}
