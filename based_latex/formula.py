@@ -98,23 +98,28 @@ def get_latex_svg_data(formula, is_math = True, margin = 4):
 	folder = tempfile.mkdtemp()
 	# Defines all paths to be used
 	paths = dict((ext, os.path.join(folder, "formula" + ext)) for ext in [".tex", ".pdf", "_outlines.pdf", ".json",".svg"])
-	# Writes TEX file
-	with open(paths[".tex"], "w") as tex_file: tex_file.write(get_formula_tex(margin, margin, margin, margin))
-	# Generates PDF from TEX file
-	if is_math: formula = "$" + formula + "$"
-	subprocess.run(["pdflatex", "-output-directory", folder, "-halt-on-error", "\\def\\formula{" + formula + "}\\input{" + paths[".tex"] + "}"])
-	# Converts fonts to outlines and generates new PDF file
-	subprocess.run(["gs", "-o", paths["_outlines.pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths[".pdf"]])
-	# Generates SVG from PDF
-	subprocess.run(["inkscape", "-l", paths[".svg"], paths["_outlines.pdf"]])
-	# Loads JSON file parameters generated during TEX compilation
-	with open(paths[".json"], "r") as file: str_dimensions = json.load(file)
-	dimensions = {}
-	for key, value in str_dimensions.items(): dimensions[key] = float(value.replace("pt", ""))
-	# Reads SVG code (minus first line <!--<xml...>-->)
-	with open(paths[".svg"], "r") as file: svg = "\n".join(file.readlines()[1:])
-	# Removes temporary folder
-	shutil.rmtree(folder)
+	exception = None
+	try:
+		# Writes TEX file
+		with open(paths[".tex"], "w") as tex_file: tex_file.write(get_formula_tex(margin, margin, margin, margin))
+		# Generates PDF from TEX file
+		if is_math: formula = "$" + formula + "$"
+		subprocess.run(["pdflatex", "-output-directory", folder, "-halt-on-error", "\\def\\formula{" + formula + "}\\input{" + paths[".tex"] + "}"])
+		# Converts fonts to outlines and generates new PDF file
+		subprocess.run(["gs", "-o", paths["_outlines.pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths[".pdf"]])
+		# Generates SVG from PDF
+		subprocess.run(["inkscape", "-l", paths[".svg"], paths["_outlines.pdf"]])
+		# Loads JSON file parameters generated during TEX compilation
+		with open(paths[".json"], "r") as file: str_dimensions = json.load(file)
+		dimensions = {}
+		for key, value in str_dimensions.items(): dimensions[key] = float(value.replace("pt", ""))
+		# Reads SVG code (minus first line <!--<xml...>-->)
+		with open(paths[".svg"], "r") as file: svg = "\n".join(file.readlines()[1:])
+	except Exception as e: exception = e
+	finally:
+		# Removes temporary folder
+		shutil.rmtree(folder)
+	if exception is not None: raise exception
 	# Returns dimensions dictionary and SVG code in a JSON dictionary
 	return {
 		"dimensions": dimensions,
