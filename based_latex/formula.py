@@ -39,7 +39,7 @@ def get_formula_tex(lmargin, tmargin, rmargin, bmargin):
 	\\newlength{\\pagebmargin}
 
 	\\begin{lrbox}{\\snippetbox}
-	$ {\\formula} $
+	\\formula
 	\\end{lrbox}
 
 	\\settowidth{\\snippetwidth}{\\usebox{\\snippetbox}}
@@ -91,7 +91,7 @@ def get_formula_tex(lmargin, tmargin, rmargin, bmargin):
 	\\end{document}
 	"""
 
-def get_latex_svg_data(formula, margin = 4):
+def get_latex_svg_data(formula, is_math = True, margin = 4):
 	# Trims dollar signs from formula
 	formula = formula.strip("$")
 	# Created new temporary folder
@@ -101,6 +101,7 @@ def get_latex_svg_data(formula, margin = 4):
 	# Writes TEX file
 	with open(paths[".tex"], "w") as tex_file: tex_file.write(get_formula_tex(margin, margin, margin, margin))
 	# Generates PDF from TEX file
+	if is_math: formula = "$" + formula + "$"
 	subprocess.run(["pdflatex", "-output-directory", folder, "-halt-on-error", "\\def\\formula{" + formula + "}\\input{" + paths[".tex"] + "}"])
 	# Converts fonts to outlines and generates new PDF file
 	subprocess.run(["gs", "-o", paths["_outlines.pdf"], "-dNoOutputFonts", "-sDEVICE=pdfwrite", paths[".pdf"]])
