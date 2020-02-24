@@ -97,7 +97,7 @@ def get_latex_svg_data(formula, is_math = True, margin = 4):
 	# Created new temporary folder
 	folder = tempfile.mkdtemp()
 	# Defines all paths to be used
-	paths = dict((ext, os.path.join(folder, "formula." + ext)) for ext in [".tex", ".pdf", "_outlines.pdf", ".json",".svg"])
+	paths = dict((ext, os.path.join(folder, "formula" + ext)) for ext in [".tex", ".pdf", "_outlines.pdf", ".json",".svg"])
 	# Writes TEX file
 	with open(paths[".tex"], "w") as tex_file: tex_file.write(get_formula_tex(margin, margin, margin, margin))
 	# Generates PDF from TEX file
