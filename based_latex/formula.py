@@ -39,7 +39,7 @@ def get_formula_tex(lmargin, tmargin, rmargin, bmargin):
 	\\newlength{\\pagebmargin}
 
 	\\begin{lrbox}{\\snippetbox}
-	{ \\formula }
+	{\\formula}
 	\\end{lrbox}
 
 	\\settowidth{\\snippetwidth}{\\usebox{\\snippetbox}}
